@@ -34,9 +34,7 @@ jobs:
 
     - name: Install Android SDK Build Tools
       run: |
-        sudo apt install -y android-sdk
-        sdkmanager "platform-tools" "build-tools;33.0.2" "platforms;android-33"
-
+        
     - name: Initialize Buildozer
       run: |
         buildozer init || true
@@ -49,6 +47,26 @@ jobs:
         sed -i 's/^android.api = .*/android.api = 33/' buildozer.spec || echo "android.api = 33" >> buildozer.spec
         sed -i 's/^android.minapi = .*/android.minapi = 21/' buildozer.spec || echo "android.minapi = 21" >> buildozer.spec
 
+       - name: Install Android SDK Command Line Tools
+      run: |
+        mkdir -p $HOME/android-sdk/cmdline-tools
+        cd $HOME/android-sdk
+        wget https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
+        unzip commandlinetools-linux-11076708_latest.zip
+        mv cmdline-tools cmdline-tools-temp
+        mkdir cmdline-tools/latest
+        mv cmdline-tools-temp/* cmdline-tools/latest/
+
+    - name: Set Android SDK environment
+      run: |
+        echo "ANDROID_HOME=$HOME/android-sdk" >> $GITHUB_ENV
+        echo "PATH=$PATH:$HOME/android-sdk/cmdline-tools/latest/bin:$HOME/android-sdk/platform-tools" >> $GITHUB_ENV
+
+    - name: Install Android SDK packages
+      run: |
+        yes | sdkmanager --licenses
+        sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.2"
+ 
     - name: Build APK
       run: |
         buildozer android debug
