@@ -32,13 +32,6 @@ jobs:
         pip install --upgrade pip
         pip install buildozer cython
 
-    - name: Install Android SDK Build Tools
-      run: |
-        
-    - name: Initialize Buildozer
-      run: |
-        buildozer init || true
-
     - name: Install Android SDK Command Line Tools
       run: |
         mkdir -p $HOME/android-sdk/cmdline-tools
@@ -58,7 +51,11 @@ jobs:
       run: |
         yes | sdkmanager --licenses
         sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.2"
- 
+
+    - name: Initialize Buildozer
+      run: |
+        buildozer init || true
+
     - name: Build APK
       run: |
         buildozer android debug
@@ -68,3 +65,4 @@ jobs:
       with:
         name: monadem-alkotob-apk
         path: bin/*.apk
+
