@@ -32,6 +32,11 @@ jobs:
         pip install --upgrade pip
         pip install buildozer cython
 
+    - name: Install Android SDK Build Tools
+      run: |
+        sudo apt install -y android-sdk
+        sdkmanager "platform-tools" "build-tools;33.0.2" "platforms;android-33"
+
     - name: Initialize Buildozer
       run: |
         buildozer init || true
